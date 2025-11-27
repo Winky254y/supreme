@@ -1,0 +1,23 @@
+:root{--green:#006400;--orange:#FFA500;--light:#f8f9fa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:var(--light);color:#333}
+/* Dashboard styles (extracted) */
+.dashboard-section{padding:80px 20px;background:linear-gradient(180deg,#ffffff,#f4fff4);min-height:100vh}
+.dashboard-wrapper{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:30px;align-items:start}
+.dash-sidebar{background:white;padding:24px;border-radius:18px;box-shadow:0 15px 40px rgba(0,0,0,0.06)}
+.dash-main{background:white;padding:24px;border-radius:18px;box-shadow:0 15px 40px rgba(0,0,0,0.06)}
+.dash-avatar{width:72px;height:72px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4em;margin-bottom:12px}
+.dash-links{display:flex;flex-direction:column;gap:10px}
+.dash-links a{padding:10px 14px;border-radius:12px;color:var(--green);text-decoration:none;font-weight:700}
+.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+.stat{background:linear-gradient(180deg,#f8fff8,#ffffff);padding:18px;border-radius:12px;text-align:center;font-weight:800;color:var(--green)}
+/* Login box */
+.login-box{max-width:420px;margin:0 auto;background:white;padding:28px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.08)}
+.login-box input{width:100%;padding:12px 14px;margin:8px 0;border-radius:10px;border:1px solid #e6e6e6}
+.login-btn{background:var(--green);color:white;padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;width:100%}
+/* Utility button (kept small) */
+.btn{background:var(--orange);color:#006400;padding:12px 18px;border:none;border-radius:12px;font-weight:900;cursor:pointer}
+/* Responsive rules */
+@media (max-width:1000px){.dashboard-wrapper{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.stat-grid{grid-template-columns:1fr}.dash-header{flex-direction:column;align-items:flex-start;gap:12px}.dash-avatar{width:56px;height:56px;font-size:1.05em}}

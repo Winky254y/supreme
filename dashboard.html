@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Move It — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body>
+  <nav style="background:rgba(0,100,0,0.98);padding:14px;position:sticky;top:0;z-index:999;display:flex;justify-content:space-between;align-items:center;color:white">
+    <div style="font-weight:900;font-size:1.1em">MOVE IT</div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="/" style="color:white;text-decoration:none;font-weight:700">Home</a>
+      <a href="/" style="color:white;text-decoration:none;font-weight:700">Book Now</a>
+    </div>
+  </nav>
+
+  <section class="dashboard-section">
+    <!-- Login view -->
+    <div id="loginView">
+      <h2 style="text-align:center;color:var(--green);margin-bottom:18px;">Login to Move It Dashboard</h2>
+      <div class="login-box">
+        <label for="email"><strong>Email</strong></label>
+        <input id="email" type="email" placeholder="you@moveit.co.ke" required>
+        <label for="password"><strong>Password</strong></label>
+        <input id="password" type="password" placeholder="••••••••" required>
+        <button class="login-btn" id="loginBtn">Sign In</button>
+        <div style="margin-top:12px;text-align:center;color:#666;font-size:0.95em;">Use any email for demo (no backend required)</div>
+      </div>
+    </div>
+
+    <!-- Dashboard view (hidden until login) -->
+    <div id="dashboardView" style="display:none;margin-top:24px;">
+      <div class="dashboard-wrapper">
+        <aside class="dash-sidebar">
+          <div class="dash-avatar" id="dashAvatar">M</div>
+          <div style="font-weight:900;color:#333;font-size:1.05em;margin-bottom:6px" id="dashName">Member</div>
+          <div style="color:#666;margin-bottom:14px;font-size:0.95em">@Mnarewinxy</div>
+          <nav class="dash-links">
+            <a href="#bookings">Bookings</a>
+            <a href="#profile">Profile</a>
+            <a href="#settings">Settings</a>
+            <button style="border:none;background:transparent;color:#c33;text-align:left;padding:10px 0;cursor:pointer;font-weight:800" id="logoutBtn">Log out</button>
+          </nav>
+        </aside>
+
+        <main class="dash-main">
+          <div class="dash-header">
+            <div>
+              <h3 style="margin:0;color:var(--green)" id="welcomeTitle">Welcome</h3>
+              <div style="color:#666;font-size:0.95em">Dashboard overview</div>
+            </div>
+            <div>
+              <button class="btn" id="newBookingBtn">New Booking</button>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat">Active Moves<br><strong id="statMoves">3</strong></div>
+            <div class="stat">Trees Planted<br><strong id="statTrees">12</strong></div>
+            <div class="stat">CO₂ Saved<br><strong id="statCo2">420kg</strong></div>
+          </div>
+
+          <section>
+            <h4 style="color:var(--green);margin-bottom:10px">Recent Moves</h4>
+            <div style="overflow:auto;max-height:220px;">
+              <table style="width:100%;border-collapse:collapse">
+                <thead>
+                  <tr style="text-align:left;color:#666;font-weight:700"><th style="padding:8px">Date</th><th style="padding:8px">From → To</th><th style="padding:8px">Status</th></tr>
+                </thead>
+                <tbody id="recentMoves">
+                  <tr><td style="padding:8px">2025-11-01</td><td style="padding:8px">Westlands → Kilimani</td><td style="padding:8px;color:var(--green)">Completed</td></tr>
+                  <tr><td style="padding:8px">2025-10-21</td><td style="padding:8px">Kisumu → Eldoret</td><td style="padding:8px;color:#FFA500">In Transit</td></tr>
+                  <tr><td style="padding:8px">2025-09-12</td><td style="padding:8px">Mombasa → Nairobi</td><td style="padding:8px;color:#c33">Cancelled</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <script src="/assets/js/dashboard.js"></script>
+</body>
+</html>
