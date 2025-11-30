@@ -6,6 +6,7 @@
   <title>Move It – Kenya's #1 Eco Moving App</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
   <style>
     :root{--green:#006400;--orange:#FFA500;--light:#f8f9fa;--dark:#1a1a1a;}
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -116,13 +117,116 @@
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features">
+<!-- FEATURES (Interactive Product Section) -->
+<section class="features" id="features">
   <h2>Why Kenya Chooses Move It</h2>
-  <div class="features-grid">
-    <div class="feature visible"><i class="fas fa-leaf"></i><h3>Eco-First</h3><p>Jute packs • Solar vans • Tree planting</p></div>
-    <div class="feature visible" style="animation-delay:0.3s;"><i class="fas fa-graduation-cap"></i><h3>Student Power</h3><p>20% OFF • Free crates • Campus priority</p></div>
-    <div class="feature visible" style="animation-delay:0.6s;"><i class="fas fa-bolt"></i><h3>Instant Magic</h3><p>M-Pesa STK • 30-sec booking</p></div>
+
+  <!-- Filters / Search -->
+  <div style="max-width:1200px;margin:0 auto 30px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;">
+    <div id="featureFilters" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="packing">Packing</button>
+      <button class="filter-btn" data-filter="transport">Transport</button>
+      <button class="filter-btn" data-filter="insurance">Insurance</button>
+      <button class="filter-btn" data-filter="student">Student</button>
+      <button class="filter-btn" data-filter="corporate">Corporate</button>
+    </div>
+    <input id="featureSearch" type="search" placeholder="Search features (e.g. crates, M-Pesa, insurance)" style="padding:12px 18px;border-radius:30px;border:2px solid #e9ecef;min-width:280px;">
+  </div>
+
+  <div class="features-grid" id="featuresGrid">
+    <div class="feature" data-category="packing" data-title="Eco Packing Kits">
+      <i class="fas fa-box-open"></i>
+      <h3>Eco Packing Kits</h3>
+      <p>Reusable crates, jute covers and itemized packing for safe moves.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="transport" data-title="Solar-Powered Vans">
+      <i class="fas fa-shuttle-van"></i>
+      <h3>Solar-Powered Vans</h3>
+      <p>Quiet, low-emission vans with GPS tracking for peace of mind.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="student" data-title="Student Package">
+      <i class="fas fa-graduation-cap"></i>
+      <h3>Student Package</h3>
+      <p>20% off, free crates and priority campus pickups during term breaks.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="insurance" data-title="Move Insurance">
+      <i class="fas fa-shield-alt"></i>
+      <h3>Move Insurance</h3>
+      <p>Free basic cover up to KSh 500,000; premium options for valuable items.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="packing" data-title="Fragile Item Handling">
+      <i class="fas fa-glass-cheers"></i>
+      <h3>Fragile Item Handling</h3>
+      <p>Custom crating, cushioning and on-site packing by trained crews.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="corporate" data-title="Corporate Moves">
+      <i class="fas fa-building"></i>
+      <h3>Corporate Moves</h3>
+      <p>Dedicated account manager, off-hours moves and inventory management.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="transport" data-title="Real-time Tracking">
+      <i class="fas fa-map-marker-alt"></i>
+      <h3>Real-time Tracking</h3>
+      <p>Live tracking link and arrival ETAs so you always know where your belongings are.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="corporate" data-title="On-site Surveys">
+      <i class="fas fa-search-location"></i>
+      <h3>On-site Surveys</h3>
+      <p>Free pre-move evaluation to recommend the right vehicle and crew size.</p>
+      <button class="small-cta">Details</button>
+    </div>
+    
+    <div class="feature" data-category="transport" data-title="Appliance Disconnect & Reconnect">
+      <i class="fas fa-plug"></i>
+      <h3>Appliance Disconnect</h3>
+      <p>Qualified technicians disconnect and reconnect appliances safely during moves.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="packing" data-title="Piano & Special Moves">
+      <i class="fas fa-music"></i>
+      <h3>Piano & Special Moves</h3>
+      <p>Specialized equipment and trained crew for pianos, safes and large instruments.</p>
+      <button class="small-cta">Details</button>
+    </div>
+
+    <div class="feature" data-category="corporate" data-title="Short-term Storage">
+      <i class="fas fa-warehouse"></i>
+      <h3>Short-term Storage</h3>
+      <p>Secure, climate-controlled storage for anything between a day and 3 months.</p>
+      <button class="small-cta">Details</button>
+    </div>
+  </div>
+
+  <!-- Modal for feature details & quick booking -->
+  <div id="featureModal" class="modal" aria-hidden="true">
+    <div class="modal-inner">
+      <button class="modal-close" aria-label="Close modal">×</button>
+      <div class="modal-body">
+        <h3 id="modalTitle">Feature Title</h3>
+        <p id="modalDesc">Full feature description goes here. Benefits, how it works and quick tips for customers.</p>
+        <ul id="modalBullets"></ul>
+        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+          <button id="bookNow" class="btn">Book Now</button>
+          <a id="whatsappLink" class="btn" style="background:#25D366;color:white;">WhatsApp Us</a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -721,7 +825,5 @@ window.addEventListener('scroll', () => {
 // Dashboard logic moved to /assets/js/dashboard.js
 </script>
 <script src="/assets/js/dashboard.js"></script>
-</script>
-Under which section should i placemy newly login plus dash board codes
 </body>
 </html>
