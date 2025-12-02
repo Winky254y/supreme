@@ -49,3 +49,18 @@ body{font-family:'Poppins',sans-serif;background:var(--light);color:#333}
 
 /* Parallax helper: will be toggled by JS for smoother transforms */
 .parallax-transform{will-change:transform}
+
+/* Signup form tweaks */
+.modal-body form input{font-size:1em}
+#signupError{font-size:0.95em}
+.modal-body label{font-size:0.95em;color:#333}
+
+/* Make modal buttons consistent */
+#signupModal .btn{border-radius:12px;padding:10px 16px}
+
+/* Small screens modal spacing */
+@media (max-width:480px){
+	.modal-inner{width:96%;padding:14px}
+	#signupModal .modal-body form{gap:10px}
+	#signupModal .modal-body label{font-size:0.9em}
+}

@@ -5,37 +5,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginView = document.getElementById('loginView');
   const dashboardView = document.getElementById('dashboardView');
 
-  function setUserSession(email){
-    localStorage.setItem('moveitUser', email);
+  // Session helpers: store JSON {email, token}
+  function setUserSession(obj){
+    if (!obj) return;
+    if (typeof obj === 'string') obj = { email: obj };
+    localStorage.setItem('moveitUser', JSON.stringify(obj));
   }
   function clearUserSession(){
     localStorage.removeItem('moveitUser');
   }
   function getUserSession(){
-    return localStorage.getItem('moveitUser');
+    const v = localStorage.getItem('moveitUser');
+    if (!v) return null;
+    try{ return JSON.parse(v); } catch(e){ return { email: String(v) }; }
   }
 
-  function showDashboard(userEmail){
-    const username = (userEmail || '').split('@')[0] || 'Member';
-    document.getElementById('dashName').textContent = username.charAt(0).toUpperCase() + username.slice(1);
-    document.getElementById('dashAvatar').textContent = username.charAt(0).toUpperCase();
-    document.getElementById('welcomeTitle').textContent = `Hello, ${username}`;
-    loginView.style.display = 'none';
-    dashboardView.style.display = 'block';
+  function showDashboard(user){
+    const email = (typeof user === 'string' ? user : (user?.email || '')) || '';
+    const username = (email.split('@')[0]) || 'Member';
+    const pretty = username.charAt(0).toUpperCase() + username.slice(1);
+    const dashNameEl = document.getElementById('dashName');
+    const dashAvatarEl = document.getElementById('dashAvatar');
+    const welcomeTitle = document.getElementById('welcomeTitle');
+    if (dashNameEl) dashNameEl.textContent = pretty;
+    if (dashAvatarEl) dashAvatarEl.textContent = pretty.charAt(0);
+    if (welcomeTitle) welcomeTitle.textContent = `Hello, ${pretty}`;
+    if (loginView) loginView.style.display = 'none';
+    if (dashboardView) dashboardView.style.display = 'block';
   }
 
   // Auto-login if session exists
   const existing = getUserSession();
-  if (existing) showDashboard(existing);
+  if (existing && existing.email) showDashboard(existing);
 
-  if (loginBtn) loginBtn.addEventListener('click', (e) => {
+  // Login: call backend /api/login if available
+  if (loginBtn) loginBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
     const pass = document.getElementById('password').value.trim();
-    if (!email || !pass) return alert('Please enter email and password (demo only)');
-    // set session and show dashboard
-    setUserSession(email);
-    showDashboard(email);
+    if (!email || !pass) return alert('Please enter email and password');
+    try{
+      const resp = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password: pass }) });
+      const data = await resp.json();
+      if (!resp.ok) return alert(data.error || 'Login failed');
+      setUserSession({ email: data.email, token: data.token });
+      showDashboard({ email: data.email });
+    }catch(err){
+      // fallback to local offline behaviour
+      setUserSession(email);
+      showDashboard(email);
+    }
   });
 
   if (logoutBtn) logoutBtn.addEventListener('click', () => {
@@ -230,4 +249,155 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   window.addEventListener('scroll', onScroll, {passive:true});
+
+  // --- Signup modal behavior (opens when clicking Dashboard link) ---
+  const dashboardLink = document.getElementById('dashboardLink');
+  const signupModal = document.getElementById('signupModal');
+  const signupForm = document.getElementById('signupForm');
+  const signupEmail = document.getElementById('signupEmail');
+  const signupPassword = document.getElementById('signupPassword');
+  const signupConfirm = document.getElementById('signupConfirm');
+  const signupError = document.getElementById('signupError');
+  const signupCancel = document.getElementById('signupCancel');
+  const togglePwd = document.getElementById('togglePwd');
+
+  function openSignup(){
+    lastFocusedElement = document.activeElement;
+    signupModal.setAttribute('aria-hidden','false');
+    signupModal.classList.add('open');
+    setTimeout(()=> signupModal.querySelector('.modal-close')?.focus(),50);
+  }
+
+  function closeSignup(){
+    signupModal.classList.remove('open');
+    signupModal.setAttribute('aria-hidden','true');
+    signupError.style.display = 'none';
+    signupForm.reset();
+    if (lastFocusedElement) lastFocusedElement.focus();
+  }
+
+  if (dashboardLink) {
+    dashboardLink.addEventListener('click', (e) => {
+      const sess = getUserSession();
+      if (sess && sess.email) {
+        // already signed in — allow normal navigation to dashboard.html
+        return;
+      }
+      // not signed in: open signup modal instead of navigating
+      e.preventDefault();
+      openSignup();
+      console.log('event:open_signup_from_nav');
+    });
+  }
+
+  // close handlers
+  signupModal?.addEventListener('click', (e)=>{ if (e.target === signupModal) closeSignup(); });
+  signupModal?.querySelector('.modal-close')?.addEventListener('click', closeSignup);
+  signupCancel?.addEventListener('click', closeSignup);
+
+  // show/hide password
+  togglePwd?.addEventListener('click', ()=>{
+    const type = signupPassword.type === 'password' ? 'text' : 'password';
+    signupPassword.type = type;
+    signupConfirm.type = type;
+    togglePwd.textContent = type === 'text' ? 'Hide' : 'Show';
+    togglePwd.setAttribute('aria-pressed', type === 'text');
+  });
+
+  // validation & server signup
+  function clientStrongPassword(pwd){
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(pwd);
+  }
+
+  signupForm?.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const email = (signupEmail.value || '').trim();
+    const pwd = signupPassword.value || '';
+    const confirm = signupConfirm.value || '';
+
+    signupError.style.display = 'none';
+
+    if (!email || !pwd || !confirm) {
+      signupError.style.color = '#a00';
+      signupError.textContent = 'Please complete all fields.';
+      signupError.style.display = 'block';
+      return;
+    }
+    if (!clientStrongPassword(pwd)) {
+      signupError.style.color = '#a00';
+      signupError.textContent = 'Password must be at least 8 chars and include upper, lower, number and special char.';
+      signupError.style.display = 'block';
+      signupPassword.focus();
+      return;
+    }
+    if (pwd !== confirm) {
+      signupError.style.color = '#a00';
+      signupError.textContent = 'Passwords do not match.';
+      signupError.style.display = 'block';
+      signupConfirm.focus();
+      return;
+    }
+
+    // call backend signup
+    try{
+      const resp = await fetch('/api/signup', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ email, password: pwd }) });
+      const data = await resp.json();
+      if (!resp.ok) {
+        signupError.style.color = '#a00';
+        signupError.textContent = data.error || (data.message || 'Signup failed');
+        signupError.style.display = 'block';
+        return;
+      }
+
+      // success - show verification instructions
+      signupError.style.color = '#067a07';
+      signupError.textContent = 'Account created — verification sent. Check your email.';
+      signupError.style.display = 'block';
+      if (data.previewUrl) {
+        const a = document.createElement('a');
+        a.href = data.previewUrl;
+        a.target = '_blank';
+        a.textContent = 'Open verification preview';
+        a.style.display = 'block';
+        a.style.marginTop = '8px';
+        signupError.appendChild(a);
+      }
+      if (data.verifyUrl && !data.previewUrl) {
+        const a2 = document.createElement('a');
+        a2.href = data.verifyUrl;
+        a2.target = '_blank';
+        a2.textContent = 'Open verification link';
+        a2.style.display = 'block';
+        a2.style.marginTop = '8px';
+        signupError.appendChild(a2);
+      }
+
+      // keep modal open until user verifies; do not auto-login
+    }catch(err){
+      // fallback: local store
+      const users = JSON.parse(localStorage.getItem('moveitUsers') || '[]');
+      users.push({ email: email.toLowerCase(), password: pwd, createdAt: Date.now() });
+      localStorage.setItem('moveitUsers', JSON.stringify(users));
+      setUserSession(email.toLowerCase());
+      closeSignup();
+      alert('Account created locally (offline fallback).');
+      showDashboard(email.toLowerCase());
+    }
+  });
+
+  // keyboard: close signup on ESC
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape' && signupModal && signupModal.classList.contains('open')) closeSignup();
+  });
+
+  // Social signup buttons (placeholders — server must be configured)
+  const googleSign = document.getElementById('googleSign');
+  const facebookSign = document.getElementById('facebookSign');
+  googleSign?.addEventListener('click', async () => {
+    // navigate to backend OAuth endpoint (server should redirect)
+    window.location.href = '/auth/google';
+  });
+  facebookSign?.addEventListener('click', async () => {
+    window.location.href = '/auth/facebook';
+  });
 });
